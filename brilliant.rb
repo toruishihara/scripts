@@ -1,16 +1,26 @@
 #!/usr/bin/env ruby
 include Math
 
-$ch = 8*0.162
-$ch2 = $ch*0.8
-$pd = -8*0.431
-$pd2 = $pd*0.75
-$r = 4
-$ro =$r*0.53
-$rsf=$r*0.7 
-$rl = $r*0.25
+$r = 4		#/ radius of whole diameter */
+$sf = 0.7 	#/ star facets r between 0.53 and 1.0 */
+$pp = 0.5 	#/ pavilion main facets facter, 0.5 is hishigata */
+
+$ch = 2*$r*0.162 	#/* height of table */
+$ch2 = $ch*$sf 		#/* height of low point of star_facet */
+$pd = -2*$r*0.431	#/* pavilion depth */
+$ro =$r*0.53		#/* radius of table */
+$rsf=$r*$sf 		#/* radius of table + star_facet */
 
 $pi = Math::PI
+
+#class Tuple
+	#def initialize(x,y,z)
+		#@x = x
+		#@y = y
+		#@z = z
+		#@t = "xyz"
+	#end
+#end
 
 def top_octa
 	(0..7).each do |i|
@@ -64,33 +74,37 @@ def up_girdle_facets
 end
 
 def lower_girdle
+	p = (Math.sin($pi/8) - Math.cos($pi/8))/(-1*Math.sin($pi/8) - Math.cos($pi/8))
 	(0..7).each do |i|
 		j = i+1
 		k = i+0.5
+		sk = Math.sin(k*$pi/4)
+		ck = Math.cos(k*$pi/4)
 		print_tri(
-			$r*Math.cos(i*$pi/4), $r*Math.sin(i*$pi/4),0,
-			$r*Math.cos(k*$pi/4), $r*Math.sin(k*$pi/4),0,
-			$rl*Math.cos(k*$pi/4), $rl*Math.sin(k*$pi/4),$pd2)
+			$r*ck, $r*sk, 0,
+			$r*$pp*(ck + p*sk), $r*$pp*(sk - p*ck), $pd*(1-$pp),
+			$r*Math.cos(i*$pi/4), $r*Math.sin(i*$pi/4), 0)
 		print_tri(
-			$r*Math.cos(j*$pi/4), $r*Math.sin(j*$pi/4),0,
-			$r*Math.cos(k*$pi/4), $r*Math.sin(k*$pi/4),0,
-			$rl*Math.cos(k*$pi/4), $rl*Math.sin(k*$pi/4),$pd2)
+			$r*ck, $r*sk, 0,
+			$r*$pp*(ck - p*sk), $r*$pp*(sk + p*ck), $pd*(1-$pp),
+			$r*Math.cos(j*$pi/4), $r*Math.sin(j*$pi/4), 0)
 	end
 end
 
 def pavilion_main
+	p = (Math.sin($pi/8) - Math.cos($pi/8))/(-1*Math.sin($pi/8) - Math.cos($pi/8))
 	(0..7).each do |i|
-		j = i+1
 		k = i+0.5
-		kk = i-0.5
-		print_tri(
-			$r*Math.cos(i*$pi/4), $r*Math.sin(i*$pi/4),0,
-			$rl*Math.cos(k*$pi/4), $rl*Math.sin(k*$pi/4),$pd2,
-			$rl*Math.cos(kk*$pi/4), $rl*Math.sin(kk*$pi/4),$pd2)
+		sk = Math.sin(k*$pi/4)
+		ck = Math.cos(k*$pi/4)
 		print_tri(
 			0,0,$pd,
-			$rl*Math.cos(k*$pi/4), $rl*Math.sin(k*$pi/4),$pd2,
-			$rl*Math.cos(kk*$pi/4), $rl*Math.sin(kk*$pi/4),$pd2)
+			$r*ck, $r*sk, 0,
+			$r*$pp*(ck + p*sk), $r*$pp*(sk - p*ck), $pd*(1-$pp))
+		print_tri(
+			0,0,$pd,
+			$r*ck, $r*sk, 0,
+			$r*$pp*(ck - p*sk), $r*$pp*(sk + p*ck), $pd*(1-$pp))
 	end
 end
 
